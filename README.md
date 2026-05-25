@@ -2,6 +2,8 @@
 
 A multiplayer space strategy sandbox with a focus on exploration, emotional depth, and philosophy.
 
+The game follows the "new school" of game design, where the most important thing is not actions, but the emotions and experiences of the player.
+
 ## How to run
 
 The project uses **Gradle Wrapper**, so you don't need to install Gradle.  
@@ -18,6 +20,12 @@ gradlew.bat run
 ```
 
 If you don't have JDK yet, get it from [Adoptium](https://adoptium.net).
+
+# Vysshij Vyvod
+
+Мультиплеерная космическая стратегическая песочница с упором на познавательность, эмоциональность и философию.
+
+Игра придерживается принципов «новой школы» геймдизайна, где во главе угла стоят не действия, а эмоции и переживания игрока.
 
 ## Как запустить
 
