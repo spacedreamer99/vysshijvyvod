@@ -1,4 +1,4 @@
-# The Highest Output
+# The Highest Conclusion
 
 The multiplayer space strategy sandbox with a focus on exploration, emotional depth, and philosophy.
 
