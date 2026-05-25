@@ -1,6 +1,6 @@
 # Vysshij Vyvod
 
-A multiplayer space strategy sandbox with a focus on exploration, emotional depth, and philosophy.
+The multiplayer space strategy sandbox with a focus on exploration, emotional depth, and philosophy.
 
 The game follows the "new school" of game design, where the most important thing is not actions, but the emotions and experiences of the player.
 
@@ -11,12 +11,12 @@ Only **JDK 21** or newer is required.
 
 ### Linux / macOS
 ```bash
-./gradlew run
+./gradlew clean run
 ```
 
 ### Windows
 ```cmd
-gradlew.bat run
+gradlew.bat clean run
 ```
 
 If you don't have JDK yet, get it from [Adoptium](https://adoptium.net).
@@ -34,12 +34,12 @@ If you don't have JDK yet, get it from [Adoptium](https://adoptium.net).
 
 ### Linux / macOS
 ```bash
-./gradlew run
+./gradlew clean run
 ```
 
 ### Windows
 ```cmd
-gradlew.bat run
+gradlew.bat clean run
 ```
 
 Если JDK ещё не установлена, скачайте её с [Adoptium](https://adoptium.net).
