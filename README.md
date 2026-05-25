@@ -1,4 +1,4 @@
-# Vysshij Vyvod
+# The Highest Output
 
 The multiplayer space strategy sandbox with a focus on exploration, emotional depth, and philosophy.
 
@@ -21,7 +21,7 @@ gradlew.bat clean run
 
 If you don't have JDK yet, get it from [Adoptium](https://adoptium.net).
 
-# Vysshij Vyvod
+# Высший вывод
 
 Мультиплеерная космическая стратегическая песочница с упором на познавательность, эмоциональность и философию.
 
