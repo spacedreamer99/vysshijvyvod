@@ -1,6 +1,6 @@
 # Vysshij Vyvod
 
-A space strategy game with an emphasis on atmosphere and deep lore.
+A multiplayer space strategy sandbox with a focus on exploration, emotional depth, and philosophy.
 
 ## How to run
 
