@@ -4,10 +4,6 @@ import static org.lwjgl.opengl.GL11.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
-import com.artemis.Entity;
-import org.narrativ27.vysshijvyvod.ecs.components.Position;
-import org.narrativ27.vysshijvyvod.ecs.components.Velocity;
-
 public class GameLoop
 {
     private final Window window;
@@ -22,7 +18,6 @@ public class GameLoop
     private String fpsText = "";
 
     private long lastFrameEnd = System.nanoTime();
-    private long lastFrameTime = System.nanoTime(); // для deltaTime
 
     public GameLoop(Window window, Renderer renderer, InputHandler inputHandler,
                     PauseMenu pauseMenu, Cursor cursor, EncyclopediaMenu encyclopediaMenu)
@@ -41,14 +36,8 @@ public class GameLoop
         glDepthFunc(GL_LESS);
 
         long win = window.getHandle();
-
-        // Создаём тестовую ECS-сущность (корабль)
-        Entity ship = EcsWorld.getInstance().createEntity();
-        Position shipPos = new Position();
-        shipPos.x = 0; shipPos.y = 0; shipPos.z = 0;
-        Velocity shipVel = new Velocity();
-        shipVel.dx = 10; shipVel.dy = 10; shipVel.dz = 0;
-        ship.edit().add(shipPos).add(shipVel);
+        // Захват мыши в игре
+        glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // Колбэк колеса мыши: зум в энциклопедии
         glfwSetScrollCallback(win, (w, xoffset, yoffset) -> {
@@ -69,8 +58,9 @@ public class GameLoop
 
         while (!window.shouldClose())
         {
-            if (GameState.shouldCloseRequested)
-                break;
+            // Проверка выхода в главное меню или закрытия
+            if (GameState.returnToMainMenu) break;
+            if (GameState.shouldCloseRequested) break;
 
             int[] ww = new int[1], hh = new int[1];
             glfwGetFramebufferSize(win, ww, hh);
@@ -81,18 +71,6 @@ public class GameLoop
 
             double[] mx = new double[1], my = new double[1];
             glfwGetCursorPos(win, mx, my);
-
-            // Вычисляем deltaTime (реальное время между кадрами)
-            long now = System.nanoTime();
-            float deltaTime = (now - lastFrameTime) / 1e9f;
-            lastFrameTime = now;
-            if (deltaTime <= 0) deltaTime = 1/60f; // fallback
-
-            // Обновляем ECS-мир (только когда игра не на паузе)
-            if (!inputHandler.isPaused())
-            {
-                EcsWorld.process(deltaTime);
-            }
 
             if (!inputHandler.isPaused())
             {
@@ -159,20 +137,20 @@ public class GameLoop
 
             if (GameState.showFps && !inputHandler.isPaused())
             {
-                long fpsNow = System.nanoTime();
+                long now = System.nanoTime();
                 frameCount++;
-                double elapsed = (fpsNow - lastFpsTime) / 1e9;
+                double elapsed = (now - lastFpsTime) / 1e9;
                 if (elapsed >= 1.0)
                 {
                     double frameTimeMs = elapsed / frameCount * 1000.0;
-                    fpsText = String.format("FPS: %d", frameCount);
+                    fpsText = String.format("FRAME PER SECOND: %d", frameCount);
                     frameCount = 0;
-                    lastFpsTime = fpsNow;
+                    lastFpsTime = now;
                 }
 
                 if (!fpsText.isEmpty())
                 {
-                    float scale = 0.4f;
+                    float scale = 0.5f;
                     float textW = pauseMenu.getTextWidth(fpsText, scale);
                     float textX = 20;
                     float textY = hh[0] - 60;
@@ -193,9 +171,9 @@ public class GameLoop
             int limit = GameState.fpsLimit;
             if (limit > 0 && !inputHandler.isPaused())
             {
-                long limitNow = System.nanoTime();
+                long now = System.nanoTime();
                 long targetFrameTime = TimeUnit.SECONDS.toNanos(1) / limit;
-                long elapsed = limitNow - lastFrameEnd;
+                long elapsed = now - lastFrameEnd;
                 long sleepNs = targetFrameTime - elapsed;
                 if (sleepNs > 0)
                 {
@@ -208,7 +186,5 @@ public class GameLoop
                 lastFrameEnd = System.nanoTime();
             }
         }
-
-        EcsWorld.dispose();
     }
 }

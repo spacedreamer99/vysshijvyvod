@@ -14,7 +14,7 @@ public class InputHandler
         this.pauseMenu = pauseMenu;
         this.encyclopediaMenu = encyclopediaMenu;
         encyclopediaMenu.setOnClose(this::resumeGame);
-        encyclopediaMenu.setOnBackToMenu(this::closeEncyclopedia);   // <-- добавлено
+        encyclopediaMenu.setOnBackToMenu(this::closeEncyclopedia);
     }
 
     public void handle(long win, int key, int action, Window window)
@@ -110,7 +110,13 @@ public class InputHandler
                     case 2: pauseMenu.doAction(2); break;  // Window/Fullscreen
                     case 3: pauseMenu.doAction(3); break;  // FPS counter toggle
                     case 4: pauseMenu.doAction(4); break;  // FPS lock cycle
-                    case 5: // Exit с подтверждением
+                    case 5: // VSYNC toggle
+                        pauseMenu.doAction(5);
+                        break;
+                    case 6: // MAIN MENU
+                        pauseMenu.doAction(6);
+                        break;
+                    case 7: // Exit с подтверждением
                         if (pauseMenu.tryExit())
                             GameState.shouldCloseRequested = true;
                         break;
@@ -132,7 +138,7 @@ public class InputHandler
 
     private void clearAllPressed()
     {
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 8; i++)
             pauseMenu.setButtonPressed(i, false);
     }
 }

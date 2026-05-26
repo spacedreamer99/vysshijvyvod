@@ -17,7 +17,7 @@ public class PauseMenu
     private Shader textShader;
     private int textVAO, textVBO;
 
-    private static final int BTN_COUNT = 6;
+    private static final int BTN_COUNT = 8;  // увеличено до 8
     private float[] btnX = new float[BTN_COUNT];
     private float[] btnY = new float[BTN_COUNT];
     private float[] btnW = new float[BTN_COUNT];
@@ -26,6 +26,7 @@ public class PauseMenu
     private boolean[] pressed = new boolean[BTN_COUNT];
 
     private Runnable toggleFullscreenAction;
+    private Runnable toggleVsyncAction;
 
     private boolean exitConfirmation = false;
     private long confirmStartTime = 0;
@@ -47,6 +48,7 @@ public class PauseMenu
 
     public void setToggleFullscreenAction(Runnable action) { this.toggleFullscreenAction = action; }
     public Runnable getToggleFullscreenAction() { return toggleFullscreenAction; }
+    public void setToggleVsyncAction(Runnable action) { this.toggleVsyncAction = action; }
 
     public void show() { visible = true; exitConfirmation = false; }
     public void hide()
@@ -109,15 +111,16 @@ public class PauseMenu
 
     public void doAction(int index)
     {
-        if (index != 5) resetExitConfirmation();
+        // Сброс подтверждения для всех кнопок, кроме VSYNC, MAIN MENU и EXIT
+        if (index != 5 && index != 6 && index != 7) resetExitConfirmation();
 
         switch (index)
         {
-            case 0: break;
-            case 1: break;
+            case 0: break; // Continue
+            case 1: break; // Encyclopedia
             case 2: if (toggleFullscreenAction != null) toggleFullscreenAction.run(); break;
             case 3: GameState.showFps = !GameState.showFps; break;
-            case 4:
+            case 4: // FPS Lock cycle
                     int cur = GameState.fpsLimit;
                     if (cur == 0) GameState.fpsLimit = 30;
                     else if (cur == 30) GameState.fpsLimit = 60;
@@ -125,7 +128,15 @@ public class PauseMenu
                     else if (cur == 90) GameState.fpsLimit = 120;
                     else GameState.fpsLimit = 0;
                     break;
-            case 5: break;
+            case 5: // VSYNC toggle
+                    GameState.vsync = !GameState.vsync;
+                    if (toggleVsyncAction != null) toggleVsyncAction.run();
+                    break;
+            case 6: // MAIN MENU
+                    GameState.returnToMainMenu = true;
+                    break;
+            case 7: // Exit
+                    break;
         }
     }
 
@@ -150,18 +161,21 @@ public class PauseMenu
 
     private void recalcButtons()
     {
-        float width = 900;
+        float width = 1200;
         float height = 80;
         float centerX = screenW / 2.0f;
-        float startY = screenH / 2.0f + 240;
         float gap = 110;
 
-        btnX[0] = centerX - width/2; btnY[0] = startY;              btnW[0] = width; btnH[0] = height;
-        btnX[1] = centerX - width/2; btnY[1] = startY - gap;        btnW[1] = width; btnH[1] = height;
-        btnX[2] = centerX - width/2; btnY[2] = startY - gap * 2;    btnW[2] = width; btnH[2] = height;
-        btnX[3] = centerX - width/2; btnY[3] = startY - gap * 3;    btnW[3] = width; btnH[3] = height;
-        btnX[4] = centerX - width/2; btnY[4] = startY - gap * 4;    btnW[4] = width; btnH[4] = height;
-        btnX[5] = centerX - width/2; btnY[5] = startY - gap * 5;    btnW[5] = width; btnH[5] = height;
+        float totalHeight = height + (BTN_COUNT - 1) * gap;
+        float startY = screenH / 2.0f + totalHeight / 2.0f - height;
+
+        for (int i = 0; i < BTN_COUNT; i++)
+        {
+            btnX[i] = centerX - width / 2;
+            btnY[i] = startY - i * gap;
+            btnW[i] = width;
+            btnH[i] = height;
+        }
     }
 
     public void render()
@@ -180,12 +194,14 @@ public class PauseMenu
         uiRenderer.begin();
         uiRenderer.drawDimOverlay();
 
-        drawButton(0, "CONTINUE");
-        drawButton(1, "ENCYCLOPEDIA");
-        drawButton(2, "WINDOW OR FULLSCREEN");
-        drawButton(3, GameState.showFps ? "FPS: ON" : "FPS: OFF");
-        drawButton(4, "FPS LOCK: " + (GameState.fpsLimit == 0 ? "OFF" : String.valueOf(GameState.fpsLimit)));
-        drawButton(5, exitConfirmation ? "PRESS AGAIN" : "EXIT");
+        drawButton(0, "CONTINUE PLAY GAME");
+        drawButton(1, "ENCYCLOPEDIA OF GAME");
+        drawButton(2, "WINDOW OR FULLSCREEN REGIME");
+        drawButton(3, GameState.showFps ? "FRAME PER SECOND COUNTER: ON" : "FRAME PER SECOND COUNTER: OFF");
+        drawButton(4, "FRAME PER SECOND MAXIMUM: " + (GameState.fpsLimit == 0 ? "OFF" : String.valueOf(GameState.fpsLimit)));
+        drawButton(5, "VERTICAL SYNCHRONIZATION: " + (GameState.vsync ? "ON" : "OFF"));
+        drawButton(6, "BACK TO MAIN MENU");
+        drawButton(7, exitConfirmation ? "PRESS AGAIN" : "QUIT GAME");
 
         glEnable(GL_DEPTH_TEST);
         glDisable(GL_BLEND);
